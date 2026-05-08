@@ -1,22 +1,26 @@
-import React from "react";
+import React, { type SetStateAction } from "react";
 import type { Product } from "../types";
 
 interface Props {
   product: Product;
+  setSelectedProduct: React.Dispatch<SetStateAction<Product | null>>;
 }
 
-const ProductCard: React.FC<Props> = ({ product }) => {
+const ProductCard: React.FC<Props> = ({ product, setSelectedProduct }) => {
+  const handleSetSelectedProduct = () => {
+    setSelectedProduct(product);
+  };
+
   return (
-    <div>
+    <button onClick={handleSetSelectedProduct} className="cursor-pointer">
       <img
         src={product.images[0]}
         alt={product.title}
-        className="w-56 h-auto"
+        className="w-full h-auto rounded-xl"
       />
-      <h2>{product.title}</h2>
+      <h2 className="text-xl font-semibold">{product.title}</h2>
       <p>{product.price} DKK</p>
-      <button>Read more</button>
-    </div>
+    </button>
   );
 };
 
