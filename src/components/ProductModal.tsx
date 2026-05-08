@@ -37,7 +37,7 @@ const ProductModal: React.FC<Props> = ({ product, setSelectedProduct }) => {
             className="rounded-xl"
           />
           <div className="flex flex-col gap-5">
-            <h2 className="text-xl font-semibold">{product.title}</h2>
+            <h2 className="text-3xl font-semibold">{product.title}</h2>
             <p>{product.description}</p>
             <div className="flex flex-row justify-between">
               <p className="text-xl font-semibold">{product.price} DKK</p>
