@@ -7,7 +7,7 @@ export type Category = {
   updatedAt: string;
 };
 
-export type Product = {
+export interface Product {
   id: number;
   category: Category;
   creationAt: string;
@@ -17,4 +17,8 @@ export type Product = {
   slug: string;
   title: string;
   updatedAt: string;
-};
+}
+
+export interface CartProduct extends Product {
+  amount: number;
+}

@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import type { Product } from "./types";
+import type { CartProduct, Product } from "./types";
 import ProductCard from "./components/ProductCard";
 import ProductModal from "./components/ProductModal";
+import CartModal from "./components/CartModal";
 
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [cart, setCart] = useState<CartProduct[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,6 +35,10 @@ function App() {
     fetchProducts();
   }, []);
 
+  const handleOpenCart = () => {
+    setIsCartOpen(true);
+  };
+
   return error ? (
     <p>{error}</p>
   ) : (
@@ -49,10 +56,25 @@ function App() {
           ))
         )}
       </div>
+      <button
+        className="fixed bottom-5 right-5 bg-black text-white rounded-full px-5 py-2 cursor-pointer"
+        onClick={handleOpenCart}
+      >
+        cart
+      </button>
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
           setSelectedProduct={setSelectedProduct}
+          cart={cart}
+          setCart={setCart}
+        />
+      )}
+      {isCartOpen && (
+        <CartModal
+          cart={cart}
+          setCart={setCart}
+          setIsCartOpen={setIsCartOpen}
         />
       )}
     </div>

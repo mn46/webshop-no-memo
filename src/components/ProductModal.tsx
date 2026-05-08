@@ -1,12 +1,19 @@
 import React, { useState, type SetStateAction } from "react";
-import type { Product } from "../types";
+import type { CartProduct, Product } from "../types";
 
 interface Props {
   product: Product;
   setSelectedProduct: React.Dispatch<SetStateAction<Product | null>>;
+  cart: CartProduct[];
+  setCart: React.Dispatch<SetStateAction<CartProduct[]>>;
 }
 
-const ProductModal: React.FC<Props> = ({ product, setSelectedProduct }) => {
+const ProductModal: React.FC<Props> = ({
+  product,
+  setSelectedProduct,
+  cart,
+  setCart,
+}) => {
   const [amount, setAmount] = useState<number>(1);
 
   const handleClose = () => {
@@ -19,6 +26,19 @@ const ProductModal: React.FC<Props> = ({ product, setSelectedProduct }) => {
 
   const decrementAmount = () => {
     if (amount > 1) setAmount((prev) => prev - 1);
+  };
+
+  const handleAddToCart = () => {
+    const cartProduct: CartProduct = { ...product, amount: amount };
+
+    const item = cart.find((item) => item.id === cartProduct.id);
+
+    if (item !== undefined) {
+      item.amount += amount;
+      setCart(cart);
+    } else {
+      setCart((prev) => [...prev, cartProduct]);
+    }
   };
 
   return (
@@ -44,18 +64,21 @@ const ProductModal: React.FC<Props> = ({ product, setSelectedProduct }) => {
               <div className="flex flex-row gap-5 items-center">
                 <button
                   onClick={decrementAmount}
-                  className="bg-black rounded-full w-8 aspect-square text-center text-white font-bold text-xl"
+                  className="bg-black rounded-full w-8 aspect-square text-center text-white font-bold text-xl cursor-pointer"
                 >
                   -
                 </button>
                 <p>{amount}</p>
                 <button
                   onClick={incrementAmount}
-                  className="bg-black rounded-full w-8 aspect-square text-center text-white font-bold text-xl"
+                  className="bg-black rounded-full w-8 aspect-square text-center text-white font-bold text-xl cursor-pointer"
                 >
                   +
                 </button>
-                <button className="bg-black rounded-full text-white px-5 py-1">
+                <button
+                  onClick={handleAddToCart}
+                  className="bg-black rounded-full text-white px-5 py-1 cursor-pointer"
+                >
                   add to cart
                 </button>
               </div>
