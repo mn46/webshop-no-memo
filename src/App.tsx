@@ -55,9 +55,7 @@ function App() {
   }, []);
 
   const filteredProducts = activeCategory
-    ? products.filter(
-        (product) => product.category === activeCategory.toLowerCase(),
-      )
+    ? products.filter((product) => product.category === activeCategory)
     : products;
 
   const handleOpenCart = () => {
@@ -85,7 +83,7 @@ function App() {
             {categories.map((category) => (
               <button
                 key={category.name}
-                onClick={() => handleSetActiveCategory(category.name)}
+                onClick={() => handleSetActiveCategory(category.slug)}
                 className={`rounded-full px-4 ${activeCategory === category.name ? "bg-black text-white" : "bg-gray-300"} `}
               >
                 {category.name}
