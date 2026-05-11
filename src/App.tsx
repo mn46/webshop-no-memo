@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CartProduct, Product } from "./types";
+import { type Category, type CartProduct, type Product } from "./types";
 import ProductCard from "./components/ProductCard";
 import ProductModal from "./components/ProductModal";
 import CartModal from "./components/CartModal";
@@ -11,12 +11,12 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartProduct[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await fetch(
-        "https://api.escuelajs.co/api/v1/products?offset=0&limit=100",
-      );
+      const res = await fetch("https://api.escuelajs.co/api/v1/products");
 
       if (!res.ok) {
         setLoading(false);
@@ -35,19 +35,68 @@ function App() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const res = await fetch("https://api.escuelajs.co/api/v1/categories");
+
+      if (!res.ok) {
+        setError("Error while fetching the categories.");
+        throw new Error("Error when fetching the categories.");
+      }
+
+      const data = await res.json();
+
+      if (data) {
+        setCategories(data);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const filteredProducts = activeCategoryId
+    ? products.filter((product) => product.category.id === activeCategoryId)
+    : products;
+
   const handleOpenCart = () => {
     setIsCartOpen(true);
+  };
+
+  const handleSetActiveCategory = (categoryId: number | null) => {
+    setActiveCategoryId(categoryId);
   };
 
   return error ? (
     <p>{error}</p>
   ) : (
-    <div>
-      <div className="grid grid-cols-5 gap-8 m-10">
+    <div className="m-10">
+      {categories.length > 0 && (
+        <div>
+          <p className="text-xl font-semibold">Filter by category</p>
+          <div className="flex flex-row flex-wrap gap-5 mt-5">
+            <button
+              onClick={() => handleSetActiveCategory(null)}
+              className={`rounded-full px-4 ${activeCategoryId === null ? "bg-black text-white" : "bg-gray-300"} `}
+            >
+              All
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => handleSetActiveCategory(category.id)}
+                className={`rounded-full px-4 ${activeCategoryId === category.id ? "bg-black text-white" : "bg-gray-300"} `}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-5 gap-8 mt-10">
         {loading ? (
           <p>Loading...</p>
         ) : (
-          products.map((product) => (
+          filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
