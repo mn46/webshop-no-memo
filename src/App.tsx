@@ -12,11 +12,11 @@ function App() {
   const [cart, setCart] = useState<CartProduct[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await fetch("https://api.escuelajs.co/api/v1/products");
+      const res = await fetch("https://dummyjson.com/products?limit=200");
 
       if (!res.ok) {
         setLoading(false);
@@ -27,7 +27,7 @@ function App() {
       const data = await res.json();
 
       if (data) {
-        setProducts(data);
+        setProducts(data.products);
         setLoading(false);
       }
     };
@@ -37,7 +37,7 @@ function App() {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const res = await fetch("https://api.escuelajs.co/api/v1/categories");
+      const res = await fetch("https://dummyjson.com/products/categories");
 
       if (!res.ok) {
         setError("Error while fetching the categories.");
@@ -54,16 +54,18 @@ function App() {
     fetchCategories();
   }, []);
 
-  const filteredProducts = activeCategoryId
-    ? products.filter((product) => product.category.id === activeCategoryId)
+  const filteredProducts = activeCategory
+    ? products.filter(
+        (product) => product.category === activeCategory.toLowerCase(),
+      )
     : products;
 
   const handleOpenCart = () => {
     setIsCartOpen(true);
   };
 
-  const handleSetActiveCategory = (categoryId: number | null) => {
-    setActiveCategoryId(categoryId);
+  const handleSetActiveCategory = (category: string | null) => {
+    setActiveCategory(category);
   };
 
   return error ? (
@@ -76,15 +78,15 @@ function App() {
           <div className="flex flex-row flex-wrap gap-5 mt-5">
             <button
               onClick={() => handleSetActiveCategory(null)}
-              className={`rounded-full px-4 ${activeCategoryId === null ? "bg-black text-white" : "bg-gray-300"} `}
+              className={`rounded-full px-4 ${activeCategory === null ? "bg-black text-white" : "bg-gray-300"} `}
             >
               All
             </button>
             {categories.map((category) => (
               <button
-                key={category.id}
-                onClick={() => handleSetActiveCategory(category.id)}
-                className={`rounded-full px-4 ${activeCategoryId === category.id ? "bg-black text-white" : "bg-gray-300"} `}
+                key={category.name}
+                onClick={() => handleSetActiveCategory(category.name)}
+                className={`rounded-full px-4 ${activeCategory === category.name ? "bg-black text-white" : "bg-gray-300"} `}
               >
                 {category.name}
               </button>
