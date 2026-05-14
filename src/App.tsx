@@ -84,7 +84,7 @@ function App() {
               <button
                 key={category.name}
                 onClick={() => handleSetActiveCategory(category.slug)}
-                className={`rounded-full px-4 ${activeCategory === category.name ? "bg-black text-white" : "bg-gray-300"} `}
+                className={`rounded-full px-4 ${activeCategory === category.slug ? "bg-black text-white" : "bg-gray-300"} `}
               >
                 {category.name}
               </button>
